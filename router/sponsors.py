@@ -10,6 +10,10 @@ from ..schemas.sponsors import (
 from ..schemas.sponsors_component import SponsorsComponent
 from typing import List
 
+# Error message constants
+SPONSOR_NOT_FOUND = "Sponsor not found"
+LEVEL_NOT_FOUND = "Level not found"
+
 router = APIRouter()
 
 @router.get("/", response_model=SponsorsComponent)
@@ -39,7 +43,7 @@ def update_sponsor(sponsor_id: int, sponsor: SponsorUpdate, db: Session = Depend
     """
     db_sponsor = db.query(Sponsor).filter(Sponsor.id == sponsor_id).first()
     if not db_sponsor:
-        raise HTTPException(status_code=404, detail="Sponsor not found")
+        raise HTTPException(status_code=404, detail=SPONSOR_NOT_FOUND)
     
     for key, value in sponsor.model_dump(exclude_unset=True).items():
         setattr(db_sponsor, key, value)
@@ -55,7 +59,7 @@ def delete_sponsor(sponsor_id: int, db: Session = Depends(get_db)):
     """
     db_sponsor = db.query(Sponsor).filter(Sponsor.id == sponsor_id).first()
     if not db_sponsor:
-        raise HTTPException(status_code=404, detail="Sponsor not found")
+        raise HTTPException(status_code=404, detail=SPONSOR_NOT_FOUND)
     
     db.delete(db_sponsor)
     db.commit()
@@ -66,7 +70,7 @@ def create_level(level: LevelCreate, db: Session = Depends(get_db)):
     """
     Create a new sponsor level.
     """
-    db_level = Level(**level.dict())
+    db_level = Level(**level.model_dump())
     db.add(db_level)
     db.commit()
     db.refresh(db_level)
@@ -79,9 +83,9 @@ def update_level(level_id: int, level: LevelUpdate, db: Session = Depends(get_db
     """
     db_level = db.query(Level).filter(Level.id == level_id).first()
     if not db_level:
-        raise HTTPException(status_code=404, detail="Level not found")
+        raise HTTPException(status_code=404, detail=LEVEL_NOT_FOUND)
     
-    for key, value in level.dict(exclude_unset=True).items():
+    for key, value in level.model_dump(exclude_unset=True).items():
         setattr(db_level, key, value)
     
     db.commit()
@@ -95,7 +99,7 @@ def delete_level(level_id: int, db: Session = Depends(get_db)):
     """
     db_level = db.query(Level).filter(Level.id == level_id).first()
     if not db_level:
-        raise HTTPException(status_code=404, detail="Level not found")
+        raise HTTPException(status_code=404, detail=LEVEL_NOT_FOUND)
     
     db.delete(db_level)
     db.commit()
@@ -116,6 +120,6 @@ def get_level(level_id: int, db: Session = Depends(get_db)):
     """
     db_level = db.query(Level).filter(Level.id == level_id).first()
     if not db_level:
-        raise HTTPException(status_code=404, detail="Level not found")
+        raise HTTPException(status_code=404, detail=LEVEL_NOT_FOUND)
     
     return db_level
