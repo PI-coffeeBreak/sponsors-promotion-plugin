@@ -1,4 +1,3 @@
-from utils.api import Router
 from .router import router
 from .schemas.sponsors_component import SponsorsComponent
 from services.component_registry import ComponentRegistry

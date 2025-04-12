@@ -40,6 +40,17 @@ class SponsorUpdate(BaseModel):
     class Config:
         from_attributes = True
 
+class SponsorResponse(BaseModel):
+    id: int
+    name: str
+    logo_url: str
+    website_url: str
+    level_id: int
+    description: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
 class LevelCreate(BaseModel):
     name: str = Field(..., title="Level Name", max_length=255)
 
@@ -49,5 +60,14 @@ class LevelCreate(BaseModel):
 class LevelUpdate(BaseModel):
     name: Optional[str] = Field(None, title="Level Name", max_length=255)
 
+    class Config:
+        from_attributes = True
+
+class LevelResponse(BaseModel):
+    id: int
+    name: str
+    price: float
+    benefits: str
+    
     class Config:
         from_attributes = True

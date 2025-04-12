@@ -1,13 +1,16 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from utils.api import Router
 from dependencies.database import get_db
 from dependencies.auth import check_role
 from ..models.sponsors import Sponsor, Level
-from ..schemas.sponsors import SponsorCreate, SponsorUpdate, LevelCreate, LevelUpdate
+from ..schemas.sponsors import (
+    SponsorCreate, SponsorUpdate, SponsorResponse,
+    LevelCreate, LevelUpdate, LevelResponse
+)
 from ..schemas.sponsors_component import SponsorsComponent
+from typing import List
 
-router = Router()
+router = APIRouter()
 
 @router.get("/", response_model=SponsorsComponent)
 def get_sponsors(db: Session = Depends(get_db)):
@@ -18,18 +21,18 @@ def get_sponsors(db: Session = Depends(get_db)):
     levels = db.query(Level).all()
     return SponsorsComponent(sponsors=sponsors, levels=levels)
 
-@router.post("/", response_model=Sponsor)
+@router.post("/", response_model=SponsorResponse)
 def create_sponsor(sponsor: SponsorCreate, db: Session = Depends(get_db)):
     """
     Create a new sponsor.
     """
-    db_sponsor = Sponsor(**sponsor.dict())
+    db_sponsor = Sponsor(**sponsor.model_dump())
     db.add(db_sponsor)
     db.commit()
     db.refresh(db_sponsor)
     return db_sponsor
 
-@router.put("/{sponsor_id}", response_model=Sponsor)
+@router.put("/{sponsor_id}", response_model=SponsorResponse)
 def update_sponsor(sponsor_id: int, sponsor: SponsorUpdate, db: Session = Depends(get_db)):
     """
     Update an existing sponsor.
@@ -38,14 +41,14 @@ def update_sponsor(sponsor_id: int, sponsor: SponsorUpdate, db: Session = Depend
     if not db_sponsor:
         raise HTTPException(status_code=404, detail="Sponsor not found")
     
-    for key, value in sponsor.dict(exclude_unset=True).items():
+    for key, value in sponsor.model_dump(exclude_unset=True).items():
         setattr(db_sponsor, key, value)
     
     db.commit()
     db.refresh(db_sponsor)
     return db_sponsor
 
-@router.delete("/{sponsor_id}", response_model=Sponsor)
+@router.delete("/{sponsor_id}", response_model=SponsorResponse)
 def delete_sponsor(sponsor_id: int, db: Session = Depends(get_db)):
     """
     Delete a sponsor.
@@ -58,7 +61,7 @@ def delete_sponsor(sponsor_id: int, db: Session = Depends(get_db)):
     db.commit()
     return db_sponsor
 
-@router.post("/levels/", response_model=Level)
+@router.post("/levels/", response_model=LevelResponse)
 def create_level(level: LevelCreate, db: Session = Depends(get_db)):
     """
     Create a new sponsor level.
@@ -69,7 +72,7 @@ def create_level(level: LevelCreate, db: Session = Depends(get_db)):
     db.refresh(db_level)
     return db_level
 
-@router.put("/levels/{level_id}", response_model=Level)
+@router.put("/levels/{level_id}", response_model=LevelResponse)
 def update_level(level_id: int, level: LevelUpdate, db: Session = Depends(get_db)):
     """
     Update an existing sponsor level.
@@ -85,7 +88,7 @@ def update_level(level_id: int, level: LevelUpdate, db: Session = Depends(get_db
     db.refresh(db_level)
     return db_level
 
-@router.delete("/levels/{level_id}", response_model=Level)
+@router.delete("/levels/{level_id}", response_model=LevelResponse)
 def delete_level(level_id: int, db: Session = Depends(get_db)):
     """
     Delete a sponsor level.
@@ -98,7 +101,7 @@ def delete_level(level_id: int, db: Session = Depends(get_db)):
     db.commit()
     return db_level
 
-@router.get("/levels/", response_model=List[Level]) 
+@router.get("/levels/", response_model=List[LevelResponse]) 
 def get_levels(db: Session = Depends(get_db)):
     """
     Get all sponsor levels.
@@ -106,7 +109,7 @@ def get_levels(db: Session = Depends(get_db)):
     levels = db.query(Level).all()
     return levels
 
-@router.get("/levels/{level_id}", response_model=Level)
+@router.get("/levels/{level_id}", response_model=LevelResponse)
 def get_level(level_id: int, db: Session = Depends(get_db)):
     """
     Get a specific sponsor level by ID.
