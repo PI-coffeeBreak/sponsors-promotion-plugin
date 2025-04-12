@@ -40,3 +40,14 @@ class SponsorUpdate(BaseModel):
     class Config:
         from_attributes = True
 
+class LevelCreate(BaseModel):
+    name: str = Field(..., title="Level Name", max_length=255)
+
+    class Config:
+        from_attributes = True
+
+class LevelUpdate(BaseModel):
+    name: Optional[str] = Field(None, title="Level Name", max_length=255)
+
+    class Config:
+        from_attributes = True
