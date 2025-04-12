@@ -1,0 +1,1 @@
+# sponsors-promotion-plugin
