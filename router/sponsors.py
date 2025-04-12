@@ -26,7 +26,11 @@ def get_sponsors(db: Session = Depends(get_db)):
     return SponsorsComponent(sponsors=sponsors, levels=levels)
 
 @router.post("/", response_model=SponsorResponse)
-def create_sponsor(sponsor: SponsorCreate, db: Session = Depends(get_db)):
+def create_sponsor(
+    sponsor: SponsorCreate,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Create a new sponsor.
     """
@@ -37,7 +41,12 @@ def create_sponsor(sponsor: SponsorCreate, db: Session = Depends(get_db)):
     return db_sponsor
 
 @router.put("/{sponsor_id}", response_model=SponsorResponse)
-def update_sponsor(sponsor_id: int, sponsor: SponsorUpdate, db: Session = Depends(get_db)):
+def update_sponsor(
+    sponsor_id: int,
+    sponsor: SponsorUpdate,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Update an existing sponsor.
     """
@@ -53,7 +62,11 @@ def update_sponsor(sponsor_id: int, sponsor: SponsorUpdate, db: Session = Depend
     return db_sponsor
 
 @router.delete("/{sponsor_id}", response_model=SponsorResponse)
-def delete_sponsor(sponsor_id: int, db: Session = Depends(get_db)):
+def delete_sponsor(
+    sponsor_id: int,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Delete a sponsor.
     """
@@ -66,7 +79,11 @@ def delete_sponsor(sponsor_id: int, db: Session = Depends(get_db)):
     return db_sponsor
 
 @router.post("/levels/", response_model=LevelResponse)
-def create_level(level: LevelCreate, db: Session = Depends(get_db)):
+def create_level(
+    level: LevelCreate,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Create a new sponsor level.
     """
@@ -77,7 +94,12 @@ def create_level(level: LevelCreate, db: Session = Depends(get_db)):
     return db_level
 
 @router.put("/levels/{level_id}", response_model=LevelResponse)
-def update_level(level_id: int, level: LevelUpdate, db: Session = Depends(get_db)):
+def update_level(
+    level_id: int,
+    level: LevelUpdate,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Update an existing sponsor level.
     """
@@ -93,7 +115,11 @@ def update_level(level_id: int, level: LevelUpdate, db: Session = Depends(get_db
     return db_level
 
 @router.delete("/levels/{level_id}", response_model=LevelResponse)
-def delete_level(level_id: int, db: Session = Depends(get_db)):
+def delete_level(
+    level_id: int,
+    db: Session = Depends(get_db),
+    user_info: dict = Depends(check_role(["manage_sponsors"]))
+):
     """
     Delete a sponsor level.
     """
