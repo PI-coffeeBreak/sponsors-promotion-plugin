@@ -1,8 +1,7 @@
-from fastapi import APIRouter
+from utils.api import Router
 from .sponsors import router as sponsors_router
 
-router = APIRouter()
-
-router.include_router(sponsors_router, prefix="/sponsors", tags=["Sponsors"])
+router = Router()
+router.include_router(sponsors_router, prefix="/sponsors")
 
 __all__ = ["router"]

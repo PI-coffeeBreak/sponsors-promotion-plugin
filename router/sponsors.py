@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, APIRouter
+from utils.api import Router, Depends
 from sqlalchemy.orm import Session
 from dependencies.database import get_db
 from dependencies.auth import check_role
@@ -14,16 +14,25 @@ from typing import List
 SPONSOR_NOT_FOUND = "Sponsor not found"
 LEVEL_NOT_FOUND = "Level not found"
 
-router = APIRouter()
+router = Router()
 
-@router.get("/", response_model=SponsorsComponent)
-def get_sponsors(db: Session = Depends(get_db)):
+@router.get("/component/", response_model=SponsorsComponent)
+def get_sponsors_component(db: Session = Depends(get_db)):
     """
-    Get all sponsors and their levels.
+    Get all sponsors with their levels.
     """
     sponsors = db.query(Sponsor).all()
     levels = db.query(Level).all()
-    return SponsorsComponent(sponsors=sponsors, levels=levels)
+    sponsors_component = SponsorsComponent(sponsors=sponsors, levels=levels)
+    return sponsors_component
+
+@router.get("/", response_model=List[SponsorResponse])
+def get_sponsors(db: Session = Depends(get_db)):
+    """
+    Get all sponsors.
+    """
+    sponsors = db.query(Sponsor).all()
+    return sponsors
 
 @router.post("/", response_model=SponsorResponse)
 def create_sponsor(
