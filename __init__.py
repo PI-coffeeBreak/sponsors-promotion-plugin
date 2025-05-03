@@ -16,3 +16,5 @@ def unregister_plugin():
 
 REGISTER = register_plugin
 UNREGISTER = unregister_plugin
+
+CONFIG_PAGE = True
