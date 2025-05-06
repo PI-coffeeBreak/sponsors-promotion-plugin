@@ -75,8 +75,6 @@ class LevelUpdate(BaseModel):
 class LevelResponse(BaseModel):
     id: int
     name: str
-    price: float
-    benefits: str
     
     class Config:
         from_attributes = True
