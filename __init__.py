@@ -5,6 +5,10 @@ import logging
 
 logger = logging.getLogger("coffeebreak.core")
 
+PLUGIN_TITLE = "sponsors-promotion-plugin"
+NAME = "Sponsors Promotion Plugin"
+DESCRIPTION = "A plugin to promote sponsors"
+
 def register_plugin():
     ComponentRegistry.register_component(SponsorsComponent)
     logger.debug("Sponsors component registered.")
