@@ -1,5 +1,6 @@
 from utils.api import Router, Depends
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from dependencies.database import get_db
 from dependencies.auth import check_role
 from ..models.sponsors import Sponsor, Level
@@ -9,10 +10,49 @@ from ..schemas.sponsors import (
 )
 from ..schemas.sponsors_component import SponsorsComponent
 from typing import List
+from services.media import MediaService
+from uuid import uuid4, UUID
+import re
 
 # Error message constants
 SPONSOR_NOT_FOUND = "Sponsor not found"
 LEVEL_NOT_FOUND = "Level not found"
+
+def is_valid_url(url: str) -> bool:
+    """Check if a string is a valid URL or UUID"""
+    if not url:
+        return False
+    
+    # Check if it's a UUID
+    try:
+        UUID(url)
+        return True
+    except ValueError:
+        pass
+    
+    # Check if it's a URL
+    url_pattern = re.compile(
+        r'^https?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    return bool(url_pattern.match(url))
+
+def slugify(text: str) -> str:
+    """Convert text to a URL-friendly slug"""
+    # Convert to lowercase
+    text = text.lower()
+    # Replace spaces with hyphens
+    text = text.replace(' ', '-')
+    # Remove special characters
+    text = re.sub(r'[^a-z0-9-]', '', text)
+    # Remove multiple hyphens
+    text = re.sub(r'-+', '-', text)
+    # Remove leading/trailing hyphens
+    text = text.strip('-')
+    return text
 
 router = Router()
 
@@ -43,7 +83,20 @@ def create_sponsor(
     """
     Create a new sponsor.
     """
-    db_sponsor = Sponsor(**sponsor.model_dump())
+    # Handle logo_url
+    logo_url = sponsor.logo_url
+    if not logo_url or not is_valid_url(logo_url):
+        alias = f"{slugify(sponsor.name)}-{uuid4()}"
+        media = MediaService.register(
+            db=db,
+            max_size=10 * 1024 * 1024,  # 10MB max size
+            allows_rewrite=True,
+            valid_extensions=['.jpg', '.jpeg', '.png', '.webp'],
+            alias=alias
+        )
+        logo_url = media.uuid
+
+    db_sponsor = Sponsor(**sponsor.model_dump(exclude={"logo_url"}), logo_url=logo_url)
     db.add(db_sponsor)
     db.commit()
     db.refresh(db_sponsor)
@@ -63,7 +116,23 @@ def update_sponsor(
     if not db_sponsor:
         raise HTTPException(status_code=404, detail=SPONSOR_NOT_FOUND)
     
-    for key, value in sponsor.model_dump(exclude_unset=True).items():
+    # Handle logo_url update
+    if sponsor.logo_url is not None:
+        logo_url = sponsor.logo_url
+        if not is_valid_url(logo_url):
+            alias = f"{slugify(db_sponsor.name)}-{uuid4()}"
+            media = MediaService.register(
+                db=db,
+                max_size=10 * 1024 * 1024,  # 10MB max size
+                allows_rewrite=True,
+                valid_extensions=['.jpg', '.jpeg', '.png', '.webp'],
+                alias=alias
+            )
+            logo_url = media.uuid
+        setattr(db_sponsor, 'logo_url', logo_url)
+    
+    # Update other fields
+    for key, value in sponsor.model_dump(exclude={"logo_url"}, exclude_unset=True).items():
         setattr(db_sponsor, key, value)
     
     db.commit()
