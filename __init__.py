@@ -1,6 +1,6 @@
 from .router import router
 from .schemas.sponsors_component import SponsorsComponent
-from services.component_registry import ComponentRegistry
+from coffeebreak import ComponentRegistry
 import logging
 
 logger = logging.getLogger("coffeebreak.core")

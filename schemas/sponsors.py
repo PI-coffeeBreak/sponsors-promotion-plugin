@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from schemas.media import Media
+from coffeebreak.schemas.media import Media
 # Constants for field titles to avoid duplication
 WEBSITE_URL_TITLE = "Website URL"
 SPONSOR_NAME_TITLE = "Sponsor Name"
