@@ -1,4 +1,4 @@
-from dependencies.database import Base
+from coffeebreak.dependencies.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 

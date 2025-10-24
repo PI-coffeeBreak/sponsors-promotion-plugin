@@ -1,8 +1,8 @@
-from utils.api import Router, Depends
+from coffeebreak.utils.api import Router
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
-from dependencies.database import get_db
-from dependencies.auth import check_role
+from fastapi import HTTPException, Depends
+from coffeebreak.dependencies.database import get_db
+from coffeebreak.dependencies.auth import check_role
 from ..models.sponsors import Sponsor, Level
 from ..schemas.sponsors import (
     SponsorCreate, SponsorUpdate, SponsorResponse,
@@ -10,7 +10,7 @@ from ..schemas.sponsors import (
 )
 from ..schemas.sponsors_component import SponsorsComponent
 from typing import List
-from services.media import MediaService
+from coffeebreak import MediaService
 from uuid import uuid4, UUID
 import re
 
