@@ -1,4 +1,4 @@
-from coffeebreak.utils.api import Router
+from coffeebreak import Router
 from .sponsors import router as sponsors_router
 
 router = Router()

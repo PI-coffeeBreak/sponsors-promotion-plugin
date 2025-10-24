@@ -1,8 +1,8 @@
-from coffeebreak.utils.api import Router
+from coffeebreak import Router
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends
-from coffeebreak.dependencies.database import get_db
-from coffeebreak.dependencies.auth import check_role
+from coffeebreak.db import DB as get_db
+from coffeebreak.auth import check_role
 from ..models.sponsors import Sponsor, Level
 from ..schemas.sponsors import (
     SponsorCreate, SponsorUpdate, SponsorResponse,
