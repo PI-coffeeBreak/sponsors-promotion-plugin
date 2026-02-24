@@ -2,4 +2,14 @@
 identifier = "sponsors-promotion-plugin"
 name = "Sponsors Promotion Plugin"
 description = "A plugin to promote sponsors"
+components_dir = "components"
 config_page = true
+
+[tool.coffeebreak.admin_page]
+file = "admin/Page.jsx"
+route_slug = "sponsors-promotion-plugin"
+export_name = "default"
+
+[[tool.coffeebreak.components]]
+name = "SponsorsComponent"
+file = "SponsorsComponent.jsx"
