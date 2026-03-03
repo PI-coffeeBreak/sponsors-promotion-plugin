@@ -97,8 +97,8 @@ export default function Sponsors({
   }
 
   return (
-    <div className={`overflow-hidden`}>
-      <div className="p-4">
+    <div className="overflow-hidden w-full">
+      <div className="p-4 max-w-2xl mx-auto">
         {display_search && (
           <div className="mb-4 max-w-md mx-auto">
             <input
@@ -111,15 +111,15 @@ export default function Sponsors({
           </div>
         )}
         {display_sponsor_level && levels.length > 0 ? (
-          <div className="space-y-10">
+          <div className="space-y-16">
             {sponsorsByLevel.map(level => (
               <div key={level.id} className="sponsor-level">
-                <h3 className="text-xl font-semibold mb-6 text-center text-primary">{level.name}</h3>
+                <h3 className="text-xl font-semibold mb-2 mt-8 text-center text-primary">{level.name}</h3>
                 {level.sponsors.length > 0 ? (
-                  <div className="flex flex-wrap justify-center gap-8">
+                  <div className="flex flex-wrap justify-center">
                     {level.sponsors.map(sponsor => (
-                      <SponsorLogo
-                        key={sponsor.id}
+                      <div key={sponsor.id} className="self-center m-4">
+                        <SponsorLogo
                         name={sponsor.name}
                         logo={sponsor.logo_url}
                         website={sponsor.website_url}
@@ -128,6 +128,7 @@ export default function Sponsors({
                         displayWebsite={display_sponsor_website}
                         onClick={() => setModalSponsor(sponsor)}
                       />
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -137,10 +138,10 @@ export default function Sponsors({
             ))}
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap items-center justify-center -m-4">
             {sortedSponsors.map(sponsor => (
-              <SponsorLogo
-                key={sponsor.id}
+              <div key={sponsor.id} className="m-4 self-center">
+                <SponsorLogo
                 name={sponsor.name}
                 logo={sponsor.logo_url}
                 website={sponsor.website_url}
@@ -149,6 +150,7 @@ export default function Sponsors({
                 displayWebsite={display_sponsor_website}
                 onClick={() => setModalSponsor(sponsor)}
               />
+              </div>
             ))}
           </div>
         )}
@@ -195,7 +197,7 @@ function SponsorLogo({
   displayWebsite,
   onClick
 }) {
-  const logoWidth = "w-38 md:w-48 min-h-24 max-w-xs";
+  const logoWidth = "";
   // Helper: split text into lines for SVG word wrap (max 2 lines, ellipsis if needed)
   function wrapText(text, maxCharsPerLine = 16, maxLines = 2) {
     if (!text) return [];
@@ -245,7 +247,7 @@ function SponsorLogo({
     if (!logo || logo === '') {
       return placeholderDataUri;
     }
-    if (logo.includes('http')) {
+    if (logo.startsWith('http')) {
       return logo;
     }
     return `${getApiBaseUrl()}/media/${logo}`;
@@ -264,7 +266,7 @@ function SponsorLogo({
 
   return (
     <div
-      className={`sponsor-logo flex flex-col items-center justify-center gap-2 ${logoWidth} cursor-pointer`}
+      className="sponsor-logo cursor-pointer w-40 h-24 shrink-0 flex items-center justify-center"
       onClick={handleClick}
       onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -277,19 +279,15 @@ function SponsorLogo({
       title={name}
       aria-label={name}
     >
-      <div className="h-24 flex items-center justify-center w-full">
-        <img
-          src={logoSrc}
-          alt={`${name} logo`}
-          className="max-h-24 max-w-full w-full object-contain"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = placeholderDataUri;
-          }}
-        />
-      </div>
-      {/* Optionally show name below logo if desired */}
-      {/* <p className="text-sm font-medium text-center">{name}</p> */}
+      <img
+        src={logoSrc}
+        alt={`${name} logo`}
+        className="h-16 w-32 object-contain block"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = placeholderDataUri;
+        }}
+      />
     </div>
   );
 }
