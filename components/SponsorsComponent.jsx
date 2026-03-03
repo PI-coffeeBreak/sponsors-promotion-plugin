@@ -116,7 +116,7 @@ export default function Sponsors({
               <div key={level.id} className="sponsor-level">
                 <h3 className="text-xl font-semibold mb-6 text-center text-primary">{level.name}</h3>
                 {level.sponsors.length > 0 ? (
-                  <div className="flex flex-wrap justify-center gap-6">
+                  <div className="flex flex-wrap justify-center gap-8">
                     {level.sponsors.map(sponsor => (
                       <SponsorLogo
                         key={sponsor.id}
@@ -137,7 +137,7 @@ export default function Sponsors({
             ))}
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex flex-wrap justify-center gap-8">
             {sortedSponsors.map(sponsor => (
               <SponsorLogo
                 key={sponsor.id}
@@ -195,7 +195,7 @@ function SponsorLogo({
   displayWebsite,
   onClick
 }) {
-  const logoWidth = "w-38 md:w-48";
+  const logoWidth = "w-38 md:w-48 min-h-24 max-w-xs";
   // Helper: split text into lines for SVG word wrap (max 2 lines, ellipsis if needed)
   function wrapText(text, maxCharsPerLine = 16, maxLines = 2) {
     if (!text) return [];
@@ -281,7 +281,7 @@ function SponsorLogo({
         <img
           src={logoSrc}
           alt={`${name} logo`}
-          className="max-h-24 max-w-full object-contain"
+          className="max-h-24 max-w-full w-full object-contain"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = placeholderDataUri;
