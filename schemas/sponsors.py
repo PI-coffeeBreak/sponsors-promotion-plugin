@@ -52,8 +52,8 @@ class SponsorUpdate(BaseModel):
 class SponsorResponse(BaseModel):
     id: int
     name: str
-    logo_url: str | Media
-    website_url: str
+    logo_url: Optional[str | Media] = None
+    website_url: Optional[str] = None
     level_id: int
     description: Optional[str] = None
     
