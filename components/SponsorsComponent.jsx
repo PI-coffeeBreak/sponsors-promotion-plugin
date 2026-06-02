@@ -286,6 +286,9 @@ function SponsorLogo({
         src={imgSrc}
         alt={`${name} logo`}
         className="h-16 w-32 object-contain block"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
         onError={() => {
           if (imgSrc !== placeholderDataUri) setImgSrc(placeholderDataUri);
         }}
