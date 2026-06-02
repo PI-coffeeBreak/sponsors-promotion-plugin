@@ -226,8 +226,8 @@ function SponsorLogo({
     if (currentLine) lines.push(currentLine);
     return lines;
   }
-  const base100 = 'var(--color-base-100)';
-  const baseContent = 'var(--color-base-content)';
+  const base100 = '#f5f5f4';
+  const baseContent = '#1f2937';
   const wrappedLines = wrapText(name);
   const placeholderDataUri = (() => {
     let svg = `<svg width='200' height='100' xmlns='http://www.w3.org/2000/svg'>`;
@@ -253,9 +253,12 @@ function SponsorLogo({
     return `${getApiBaseUrl()}/media/${logo}`;
   };
 
-  const logoSrc = getLogoSrc(logo);
+  const [imgSrc, setImgSrc] = useState(getLogoSrc(logo));
 
-  // Unified card appearance
+  useEffect(() => {
+    setImgSrc(getLogoSrc(logo));
+  }, [logo]);
+
   const handleClick = (e) => {
     if (displayDescription) {
       onClick && onClick();
@@ -280,12 +283,11 @@ function SponsorLogo({
       aria-label={name}
     >
       <img
-        src={logoSrc}
+        src={imgSrc}
         alt={`${name} logo`}
         className="h-16 w-32 object-contain block"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = placeholderDataUri;
+        onError={() => {
+          if (imgSrc !== placeholderDataUri) setImgSrc(placeholderDataUri);
         }}
       />
     </div>
