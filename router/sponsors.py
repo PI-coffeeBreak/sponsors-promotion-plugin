@@ -5,6 +5,7 @@ from coffeebreak.db import DB as get_db
 from coffeebreak.auth import check_role
 from ..models.sponsors import Sponsor, Level
 from ..schemas.sponsors import (
+    Sponsor as SponsorSchema, Level as LevelSchema,
     SponsorCreate, SponsorUpdate, SponsorResponse,
     LevelCreate, LevelUpdate, LevelResponse
 )
@@ -63,7 +64,10 @@ def get_sponsors_component(db: Session = Depends(get_db)):
     """
     sponsors = db.query(Sponsor).all()
     levels = db.query(Level).all()
-    sponsors_component = SponsorsComponent(sponsors=sponsors, levels=levels)
+    sponsors_component = SponsorsComponent(
+        sponsors=[SponsorSchema.model_validate(s) for s in sponsors],
+        levels=[LevelSchema.model_validate(l) for l in levels],
+    )
     return sponsors_component
 
 @router.get("/", response_model=List[SponsorResponse])
